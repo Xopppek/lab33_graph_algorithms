@@ -28,36 +28,17 @@ private:
 
     bool HasCycleRe(std::vector<bool>* visited, const int& nodeIndex) const{
         (*visited)[nodeIndex] = true;
-        /*for (int i = 0; i < _nodes.size(); i++){
-            std::cout << (*visited)[i] << " ";
-        }
-        std::cout << std::endl;
-        std::cout << nodeIndex << " nodeIndex " << "\n";*/
         for (int i = 0; i < _adjList[nodeIndex].size(); i++){
             int nodeIndex2 = (_adjList[nodeIndex])[i].first;
             //cout << "iter " << i << endl;
             if (!(*visited)[nodeIndex2])
                 return HasCycleRe(visited, nodeIndex2);
             else {
-                //std::cout << nodeIndex2 << " found visited, returning true"<< std::endl;
                 return true;
             }
         }
         return false;
     }
-/*
-    void topological_depth_search(const std::size_t &start_pos, array_sequence<bool> *is_used,
-                                  array_sequence<std::size_t> *new_order) const noexcept {
-        is_used->operator[](start_pos) = true;
-
-        for (std::size_t i = 0; i < _graph->get_size(); i++) {
-            if (!is_used->operator[](i) && this->get_edge_weight(start_pos, i) != SIZE_MAX_LOCAL) {
-                topological_depth_search(i, is_used, new_order);
-            }
-        }
-
-        new_order->append(start_pos);
-    }*/
 
 public:
     //=======================CONSTRUCTORS==========================//
@@ -157,6 +138,17 @@ public:
         return _nodes.size();
     }
 
+    void Print(){
+        for (int i = 0; i < GetSize(); i++){
+            std::cout << i << ": { ";
+            for(int j = 0; j < _adjList[i].size(); j++){
+                std::cout << "(" << (_adjList[i])[j].first << "," << (_adjList[i])[j].second << ") ";
+            }
+            std::cout << "};" << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
     //============================ALGORITHMS=========================//
 
     bool HasCycle(){
@@ -164,13 +156,8 @@ public:
         for (int i = 0; i < GetSize(); i++)
             visited[i] = false;
         for (int i = 0; i < GetSize(); i++) {
-            //std::cout << visited[i] << " visited \n========================="<< std::endl;
             if (!visited[i]) {
-                //cout << HasCycleRe(visited, i) << endl;
-                //HasCycleRe(visited, i);
                 bool ans = HasCycleRe(&visited, i);
-                //bool ans = 1;
-                //std::cout << "---------------------------\n" << ans << " is returned\n---------------------"<< std::endl;
                 if (ans) {
                     return true;
                 }
@@ -194,25 +181,6 @@ public:
         return order;
     }
 
-    /*array_sequence<std::size_t> *topological_sort() const noexcept {
-        auto is_used = new array_sequence<bool>(_graph->get_size(), false);
-        auto new_order_vertexes = new array_sequence<std::size_t>(_graph->get_size(), false);
-        new_order_vertexes->erase_all();
-
-        for (std::size_t i = 0; i < _graph->get_size(); i++) {
-            if (!is_used->operator[](i)) {
-                topological_depth_search(i, is_used, new_order_vertexes);
-            }
-        }
-
-        delete is_used;
-
-        std::reverse(new_order_vertexes->begin(), new_order_vertexes->end());
-
-        return new_order_vertexes;
-    }*/
-
-
     //========================OPERATORS=========================//
 
     T& operator[] (int nodeIndex){
@@ -232,18 +200,6 @@ public:
         }
         return os;
     }
-
-    void Print(){
-        for (int i = 0; i < GetSize(); i++){
-            std::cout << i << ": { ";
-            for(int j = 0; j < _adjList[i].size(); j++){
-                std::cout << "(" << (_adjList[i])[j].first << "," << (_adjList[i])[j].second << ") ";
-            }
-            std::cout << "};" << std::endl;
-        }
-        std::cout << std::endl;
-    }
-
 };
 
 #endif //LAB33_GRAPH_ALGORITHMS_GRAPH_H
