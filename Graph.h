@@ -16,16 +16,20 @@ private:
     vector<vector<pair<int, int>>> _adjList; // adjacency list of pairs like (nodeIndex, weight)
 
     //=====================HIDDEN METHODS==========================//
-    bool HasCycleRe(bool visited[], const int& nodeIndex, const int& parent = -1) const{
+    bool HasCycleRe(bool* visited, const int& nodeIndex) const{
         visited[nodeIndex] = true;
-        cout << nodeIndex << " nodeIndex " << parent << " parent\n";
+        /*for (int i = 0; i < _nodes.size(); i++){
+            cout << visited[i] << " ";
+        }
+        cout << endl;
+        cout << nodeIndex << " nodeIndex " << "\n";*/
         for (int i = 0; i < _adjList[nodeIndex].size(); i++){
             int nodeIndex2 = (_adjList[nodeIndex])[i].first;
             //cout << "iter " << i << endl;
             if (!visited[nodeIndex2])
-                HasCycleRe(visited, nodeIndex2, nodeIndex);
-            else if (nodeIndex2 != parent) {
-                //cout << nodeIndex2 << " " << parent << endl;
+                return HasCycleRe(visited, nodeIndex2);
+            else {
+                cout << nodeIndex2 << " found visited, returning true"<< endl;
                 return true;
             }
         }
@@ -99,11 +103,25 @@ public:
             if (counter == nodeIndex) {
                 _nodes.erase(it1);
                 _adjList.erase(it2);
-                return;
+                //return;
+                break;
             }
             counter++;
             it1++;
             it2++;
+        }
+        for (int i = 0; i < _adjList.size(); i++){
+            auto it = _adjList[i].begin();
+            while (it != _adjList[i].end()){
+                //cout << (*it).first << " ";
+                if ((*it).first == nodeIndex) {
+                    _adjList[i].erase(it);
+                    continue;
+                }
+                if ((*it).first == GetSize())
+                    (*it).first--;
+                it++;
+            }
         }
     }
 
@@ -119,9 +137,22 @@ public:
     bool HasCycle(){
         bool visited[_nodes.size()];
         for (int i = 0; i < _nodes.size(); i++)
-            if (!visited[i])
-                if (HasCycleRe(visited, i))
+            visited[i] = false;
+        for (int i = 0; i < _nodes.size(); i++) {
+
+            std::cout << visited[i] << " visited \n========================="<< endl;
+            if (!visited[i]) {
+                //cout << HasCycleRe(visited, i) << endl;
+                //HasCycleRe(visited, i);
+                bool ans = HasCycleRe(visited, i);
+                //bool ans = 1;
+                cout << "---------------------------\n" << ans << " is returned\n---------------------"<< endl;
+                if (ans) {
+                    cout << "aaaaaa" << endl;
                     return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -144,6 +175,18 @@ public:
         }
         return os;
     }
+
+    void Print(){
+        for (int i = 0; i < GetSize(); i++){
+            cout << i << ": { ";
+            for(int j = 0; j < _adjList[i].size(); j++){
+                cout << "(" << (_adjList[i])[j].first << "," << (_adjList[i])[j].second << ") ";
+            }
+            cout << "};" << endl;
+        }
+        cout << endl;
+    }
+
 };
 
 #endif //LAB33_GRAPH_ALGORITHMS_GRAPH_H

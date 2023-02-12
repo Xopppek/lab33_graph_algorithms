@@ -17,7 +17,8 @@ int main() {
     graph.AddEdge(2, 1, 9);
     graph.AddEdge(3, 0, 2);
     //cout << graph.getNode(0);
-    cout << graph << endl;
+   // cout << graph << endl;
+   graph.Print();
 
 
     //graph.DeleteEdge(3, 0);
@@ -28,7 +29,9 @@ int main() {
 
     graph.DeleteNode(3);
 
-    cout << graph << endl;
+    graph.Print();
+
+    //cout << graph << endl;
 /*
     graph.ChangeEdgeWeight(0, 2, 5);
     graph.AddNode('n');*/
