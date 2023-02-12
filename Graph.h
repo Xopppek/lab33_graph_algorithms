@@ -19,7 +19,7 @@ private:
     void TopSort(const int& startIndex, std::vector<bool>* visited, std::vector<int>* order){
         (*visited)[startIndex] = true;
         for (int i = 0; i < GetSize(); i++){
-            if((*visited)[i] && GetEdgeWeight(startIndex, i) != INF){
+            if(!(*visited)[i] && GetEdgeWeight(startIndex, i) != INF){
                 TopSort(i, visited, order);
             }
         }
@@ -68,7 +68,7 @@ public:
 
     //=========================METHODS===========================//
 
-    void AddEdge(const int& firstNodeIndex, const int& secondNodeIndex, const int& weight){
+    void AddEdge(const int& firstNodeIndex, const int& secondNodeIndex, const int& weight = 0){
         if (firstNodeIndex < 0 || firstNodeIndex >= _nodes.size() ||
             secondNodeIndex < 0 || secondNodeIndex >= _nodes.size())
             throw "Incorrect Index";
@@ -105,7 +105,7 @@ public:
         return INF;
     }
 
-    void AddNode(const T& newNode){
+    void AddNode(const T& newNode = 0){
         _nodes.push_back(newNode);
         _adjList.resize(_adjList.size()+1);
     }

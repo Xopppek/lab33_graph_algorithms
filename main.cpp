@@ -11,6 +11,8 @@ int main() {
     graph.AddNode('b');
     graph.AddNode('c');
     graph.AddNode('d');
+    graph.AddNode();
+    graph.AddEdge(4, 2);
     graph.AddEdge(0, 1, 13);
     graph.AddEdge(0, 2, 4);
     graph.AddEdge(1, 3, 10);
