@@ -18,7 +18,7 @@ int main() {
     graph.AddEdge(3, 0, 2);
     //cout << graph.getNode(0);
    // cout << graph << endl;
-   graph.Print();
+   //graph.Print();
 
 
     //graph.DeleteEdge(3, 0);
@@ -27,10 +27,23 @@ int main() {
     //cout << graph << endl;
 
 
-    graph.DeleteNode(3);
-
+    graph.DeleteEdge(3, 0);
+    //graph.DeleteNode(3);
+   /* graph.DeleteEdge(0, 1);
+    graph.DeleteEdge(3, 0);
+    graph.AddEdge(1, 0, 4);
+    graph.DeleteNode(3);*/
+    //graph.DeleteEdge(2, 1);
     graph.Print();
 
+    if (!graph.HasCycle()) {
+        auto a = graph.TopologicalSort();
+        for (int i = 0; i < a.size(); i++)
+            cout << a[i] << " ";
+        cout << endl;
+    }
+
+    //cout << graph.HasCycle() << endl;
     //cout << graph << endl;
 /*
     graph.ChangeEdgeWeight(0, 2, 5);
@@ -38,7 +51,6 @@ int main() {
 
     //cout << graph << endl;
 
-    //cout << graph.HasCycle() << endl;
 
     return 0;
 }

@@ -4,37 +4,60 @@
 #include <iostream>
 #include "vector"
 #include "utility"
+#include "algorithm"
 
 const int INF = 32000;
 
-using namespace std;
 
 template <typename T>
 class Graph{
 private:
-    vector<T> _nodes;
-    vector<vector<pair<int, int>>> _adjList; // adjacency list of pairs like (nodeIndex, weight)
+    std::vector<T> _nodes;
+    std::vector<std::vector<std::pair<int, int>>> _adjList; // adjacency list of pairs like (nodeIndex, weight)
 
     //=====================HIDDEN METHODS==========================//
-    bool HasCycleRe(bool* visited, const int& nodeIndex) const{
-        visited[nodeIndex] = true;
-        /*for (int i = 0; i < _nodes.size(); i++){
-            cout << visited[i] << " ";
+    void TopSort(const int& startIndex, std::vector<bool>* visited, std::vector<int>* order){
+        (*visited)[startIndex] = true;
+        for (int i = 0; i < GetSize(); i++){
+            if((*visited)[i] && GetEdgeWeight(startIndex, i) != INF){
+                TopSort(i, visited, order);
+            }
         }
-        cout << endl;
-        cout << nodeIndex << " nodeIndex " << "\n";*/
+        (*order).push_back(startIndex);
+    }
+
+    bool HasCycleRe(std::vector<bool>* visited, const int& nodeIndex) const{
+        (*visited)[nodeIndex] = true;
+        /*for (int i = 0; i < _nodes.size(); i++){
+            std::cout << (*visited)[i] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << nodeIndex << " nodeIndex " << "\n";*/
         for (int i = 0; i < _adjList[nodeIndex].size(); i++){
             int nodeIndex2 = (_adjList[nodeIndex])[i].first;
             //cout << "iter " << i << endl;
-            if (!visited[nodeIndex2])
+            if (!(*visited)[nodeIndex2])
                 return HasCycleRe(visited, nodeIndex2);
             else {
-                cout << nodeIndex2 << " found visited, returning true"<< endl;
+                //std::cout << nodeIndex2 << " found visited, returning true"<< std::endl;
                 return true;
             }
         }
         return false;
     }
+/*
+    void topological_depth_search(const std::size_t &start_pos, array_sequence<bool> *is_used,
+                                  array_sequence<std::size_t> *new_order) const noexcept {
+        is_used->operator[](start_pos) = true;
+
+        for (std::size_t i = 0; i < _graph->get_size(); i++) {
+            if (!is_used->operator[](i) && this->get_edge_weight(start_pos, i) != SIZE_MAX_LOCAL) {
+                topological_depth_search(i, is_used, new_order);
+            }
+        }
+
+        new_order->append(start_pos);
+    }*/
 
 public:
     //=======================CONSTRUCTORS==========================//
@@ -49,7 +72,7 @@ public:
         if (firstNodeIndex < 0 || firstNodeIndex >= _nodes.size() ||
             secondNodeIndex < 0 || secondNodeIndex >= _nodes.size())
             throw "Incorrect Index";
-        _adjList[firstNodeIndex].push_back(make_pair(secondNodeIndex, weight));
+        _adjList[firstNodeIndex].push_back(std::make_pair(secondNodeIndex, weight));
     }
 
     void ChangeEdgeWeight(const int& firstNodeIndex, const int& secondNodeIndex, const int& weight){
@@ -134,27 +157,61 @@ public:
         return _nodes.size();
     }
 
-    bool HasCycle(){
-        bool visited[_nodes.size()];
-        for (int i = 0; i < _nodes.size(); i++)
-            visited[i] = false;
-        for (int i = 0; i < _nodes.size(); i++) {
+    //============================ALGORITHMS=========================//
 
-            std::cout << visited[i] << " visited \n========================="<< endl;
+    bool HasCycle(){
+        auto visited = std::vector<bool> (GetSize(), false);
+        for (int i = 0; i < GetSize(); i++)
+            visited[i] = false;
+        for (int i = 0; i < GetSize(); i++) {
+            //std::cout << visited[i] << " visited \n========================="<< std::endl;
             if (!visited[i]) {
                 //cout << HasCycleRe(visited, i) << endl;
                 //HasCycleRe(visited, i);
-                bool ans = HasCycleRe(visited, i);
+                bool ans = HasCycleRe(&visited, i);
                 //bool ans = 1;
-                cout << "---------------------------\n" << ans << " is returned\n---------------------"<< endl;
+                //std::cout << "---------------------------\n" << ans << " is returned\n---------------------"<< std::endl;
                 if (ans) {
-                    cout << "aaaaaa" << endl;
                     return true;
                 }
             }
+            for (int i = 0; i < GetSize(); i++)
+                visited[i] = false;
         }
         return false;
     }
+
+    std::vector<int> TopologicalSort(){
+        auto visited = std::vector<bool>(GetSize(), false);
+        auto order = std::vector<int>();
+
+        for (int i = 0; i < GetSize(); i++){
+            if (!visited[i]){
+                TopSort(i, &visited, &order);
+            }
+        }
+        std::reverse(order.begin(), order.end());
+        return order;
+    }
+
+    /*array_sequence<std::size_t> *topological_sort() const noexcept {
+        auto is_used = new array_sequence<bool>(_graph->get_size(), false);
+        auto new_order_vertexes = new array_sequence<std::size_t>(_graph->get_size(), false);
+        new_order_vertexes->erase_all();
+
+        for (std::size_t i = 0; i < _graph->get_size(); i++) {
+            if (!is_used->operator[](i)) {
+                topological_depth_search(i, is_used, new_order_vertexes);
+            }
+        }
+
+        delete is_used;
+
+        std::reverse(new_order_vertexes->begin(), new_order_vertexes->end());
+
+        return new_order_vertexes;
+    }*/
+
 
     //========================OPERATORS=========================//
 
@@ -178,13 +235,13 @@ public:
 
     void Print(){
         for (int i = 0; i < GetSize(); i++){
-            cout << i << ": { ";
+            std::cout << i << ": { ";
             for(int j = 0; j < _adjList[i].size(); j++){
-                cout << "(" << (_adjList[i])[j].first << "," << (_adjList[i])[j].second << ") ";
+                std::cout << "(" << (_adjList[i])[j].first << "," << (_adjList[i])[j].second << ") ";
             }
-            cout << "};" << endl;
+            std::cout << "};" << std::endl;
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 
 };
