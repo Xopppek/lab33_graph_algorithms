@@ -156,6 +156,11 @@ public:
         std::cout << std::endl;
     }
 
+    void Clean(){
+        for (int i = GetSize()-1; i >= 0; i--)
+            DeleteNode(i);
+    }
+
     //============================ALGORITHMS=========================//
 
     bool HasCycle(){
@@ -225,6 +230,24 @@ public:
                                                                        paths[startNodeIndex][throughNodeIndex] +
                                                                        paths[throughNodeIndex][endNodeIndex]);
 
+        return paths;
+    }
+
+    std::vector<int> FordBellmanShortestPaths(const int& startNodeIndex){
+        auto paths = std::vector<int>(GetSize(), INF);
+        paths[startNodeIndex] = 0;
+        bool isChanged = true;
+        while (isChanged){
+            isChanged = false;
+            for (int i = 0; i < GetSize(); i++){
+                for (int j = 0; j < _adjList[i].size(); j++){
+                    if (paths[_adjList[i][j].first] > paths[i] + _adjList[i][j].second && paths[i] != INF) {
+                        paths[_adjList[i][j].first] = paths[i] + _adjList[i][j].second;
+                        isChanged = true;
+                    }
+                }
+            }
+        }
         return paths;
     }
 
