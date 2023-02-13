@@ -102,6 +102,7 @@ int main() {
     graph.AddEdge(0, 2, 3);
     graph.AddEdge(1, 3, 2);
     graph.AddEdge(3, 4, 2);
+    graph.DeleteNode(2);
 
     graph.Print();
 

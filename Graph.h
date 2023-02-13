@@ -129,7 +129,7 @@ public:
                     _adjList[i].erase(it);
                     continue;
                 }
-                if ((*it).first == GetSize())
+                if ((*it).first > nodeIndex)
                     (*it).first--;
                 it++;
             }
@@ -208,35 +208,6 @@ public:
             }
         }
         return paths;
-
-
-      /*  vector<pair<int, int>> dijkstra(int source) {
-            set<pair<int, int>> vertexSet;
-            vector<int> dist(numVertices, numeric_limits<int>::max());
-            vector<int> pred(numVertices, -1);
-            dist[source] = 0;
-            vertexSet.insert(make_pair(0, source));
-            while (!vertexSet.empty()) {
-                int u = vertexSet.begin()->second;
-                vertexSet.erase(vertexSet.begin());
-                for (pair<int, int> p: adjList[u]) {
-                    int v = p.first;
-                    int weight = p.second;
-                    if (dist[v] > dist[u] + weight) {
-                        vertexSet.erase(make_pair(dist[v], v));
-                        dist[v] = dist[u] + weight;
-                        pred[v] = u;
-                        vertexSet.insert(make_pair(dist[v], v));
-                    }
-                }
-            }
-            vector<pair<int, int>> res;
-            for (int i = 0; i < pred.size(); i++) {
-                res.push_back(make_pair(i, pred[i]));
-            }
-            return res;
-        }*/
-        //return paths;
     }
 
     //========================OPERATORS=========================//
