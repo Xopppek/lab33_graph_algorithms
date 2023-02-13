@@ -210,6 +210,24 @@ public:
         return paths;
     }
 
+    std::vector<std::vector<int>> FloydWarshallShortestPaths(){
+        auto paths = std::vector<std::vector<int>>(GetSize(), std::vector<int>(GetSize(), INF));
+        for (int i = 0; i < GetSize(); i++)
+            paths[i][i] = 0;
+        for (int i = 0; i < GetSize(); i++)
+            for (auto it = _adjList[i].begin(); it != _adjList[i].end(); it++)
+                paths[i][(*it).first] = (*it).second;
+        for (int throughNodeIndex = 0; throughNodeIndex < GetSize(); throughNodeIndex++)
+            for (int startNodeIndex = 0; startNodeIndex < GetSize(); startNodeIndex++)
+                for (int endNodeIndex = 0; endNodeIndex < GetSize(); endNodeIndex++)
+                    if (paths[startNodeIndex][throughNodeIndex] != INF && paths[throughNodeIndex][endNodeIndex] != INF)
+                        paths[startNodeIndex][endNodeIndex] = std::min(paths[startNodeIndex][endNodeIndex],
+                                                                       paths[startNodeIndex][throughNodeIndex] +
+                                                                       paths[throughNodeIndex][endNodeIndex]);
+
+        return paths;
+    }
+
     //========================OPERATORS=========================//
 
     T& operator[] (int nodeIndex){

@@ -102,7 +102,7 @@ int main() {
     graph.AddEdge(0, 2, 3);
     graph.AddEdge(1, 3, 2);
     graph.AddEdge(3, 4, 2);
-    graph.DeleteNode(2);
+    //graph.DeleteNode(2);
 
     graph.Print();
 
@@ -120,6 +120,23 @@ int main() {
         cout << counter << ": " << (*it) << endl;
         counter++;
     }
+    cout << "Dijkstra\n\n";
+
+
+    auto path2 = graph.FloydWarshallShortestPaths();
+    counter = 0;
+    for (auto it = path2.begin(); it != path2.end(); it++){
+        cout << counter << ": ";
+        for (auto it2 = (*it).begin(); it2 != (*it).end(); it2++){
+            if (*it2 == INF)
+                cout << " INF";
+            else
+                printf("%4d", *it2);
+        }
+        cout << endl;
+        counter++;
+    }
+    cout << "Floyd\n\n";
     //cout << graph.HasCycle() << endl;
     //cout << graph << endl;
 /*
