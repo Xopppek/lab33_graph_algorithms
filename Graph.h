@@ -5,6 +5,7 @@
 #include "vector"
 #include "utility"
 #include "algorithm"
+#include "set"
 
 const int INF = 32000;
 
@@ -53,6 +54,9 @@ public:
         if (firstNodeIndex < 0 || firstNodeIndex >= _nodes.size() ||
             secondNodeIndex < 0 || secondNodeIndex >= _nodes.size())
             throw "Incorrect Index";
+        for (int i = 0; i < _adjList[firstNodeIndex].size(); i++){
+            if (_adjList[firstNodeIndex][i].first == secondNodeIndex) throw "Edge already exists";
+        }
         _adjList[firstNodeIndex].push_back(std::make_pair(secondNodeIndex, weight));
     }
 
@@ -80,10 +84,15 @@ public:
     }
 
     int GetEdgeWeight(const int& firstNodeIndex, const int& secondNodeIndex) const{
+        if (firstNodeIndex == secondNodeIndex) return 0;
         for (auto it = _adjList[firstNodeIndex].begin(); it < _adjList[firstNodeIndex].end(); it++)
             if ((*it).first == secondNodeIndex)
                 return (*it).second;
         return INF;
+    }
+
+    bool AreConnected(const int& firstNodeIndex, const int& secondNodeIndex){
+        return (!(GetEdgeWeight(firstNodeIndex, secondNodeIndex)==INF));
     }
 
     void AddNode(const T& newNode = 0){
@@ -107,7 +116,6 @@ public:
             if (counter == nodeIndex) {
                 _nodes.erase(it1);
                 _adjList.erase(it2);
-                //return;
                 break;
             }
             counter++;
@@ -117,7 +125,6 @@ public:
         for (int i = 0; i < _adjList.size(); i++){
             auto it = _adjList[i].begin();
             while (it != _adjList[i].end()){
-                //cout << (*it).first << " ";
                 if ((*it).first == nodeIndex) {
                     _adjList[i].erase(it);
                     continue;
@@ -179,6 +186,57 @@ public:
         }
         std::reverse(order.begin(), order.end());
         return order;
+    }
+
+    std::vector<int> DijkstraShortestPaths(const int& startNodeIndex){
+        auto paths = std::vector<int>(GetSize(), INF);
+        auto visited = std::vector<bool>(GetSize(), false);
+        paths[startNodeIndex] = 0;
+        std::set<std::pair<int, int>> nodes;
+        nodes.insert(std::make_pair(startNodeIndex, 0));
+        while(!nodes.empty()){
+            int nodeIndex = nodes.begin()->first;
+            nodes.erase(nodes.begin());
+            for (auto it = _adjList[nodeIndex].begin(); it < _adjList[nodeIndex].end(); it++){
+                int nextNodeIndex = (*it).first;
+                int nextNodeWeight = (*it).second;
+                if (paths[nextNodeIndex] > paths[nodeIndex] + nextNodeWeight){
+                    nodes.erase(std::make_pair(nextNodeIndex, paths[nextNodeIndex]));
+                    paths[nextNodeIndex] = paths[nodeIndex] + nextNodeWeight;
+                    nodes.insert(std::make_pair(nextNodeIndex, paths[nextNodeIndex]));
+                }
+            }
+        }
+        return paths;
+
+
+      /*  vector<pair<int, int>> dijkstra(int source) {
+            set<pair<int, int>> vertexSet;
+            vector<int> dist(numVertices, numeric_limits<int>::max());
+            vector<int> pred(numVertices, -1);
+            dist[source] = 0;
+            vertexSet.insert(make_pair(0, source));
+            while (!vertexSet.empty()) {
+                int u = vertexSet.begin()->second;
+                vertexSet.erase(vertexSet.begin());
+                for (pair<int, int> p: adjList[u]) {
+                    int v = p.first;
+                    int weight = p.second;
+                    if (dist[v] > dist[u] + weight) {
+                        vertexSet.erase(make_pair(dist[v], v));
+                        dist[v] = dist[u] + weight;
+                        pred[v] = u;
+                        vertexSet.insert(make_pair(dist[v], v));
+                    }
+                }
+            }
+            vector<pair<int, int>> res;
+            for (int i = 0; i < pred.size(); i++) {
+                res.push_back(make_pair(i, pred[i]));
+            }
+            return res;
+        }*/
+        //return paths;
     }
 
     //========================OPERATORS=========================//
